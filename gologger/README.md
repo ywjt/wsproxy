@@ -5,7 +5,7 @@ A simple log Toolkit for golang.
 # Install
 
 ```
-go get github.com/ywjt/wsproxy/logger
+go get github.com/ywjt/wsproxy/gologger
 go get ./...
 ```
 
