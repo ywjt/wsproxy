@@ -2,7 +2,7 @@ package gologger
 
 import (
 	"errors"
-	"gologger/color"
+	"github.com/fatih/color"
 	"io"
 	"os"
 	"reflect"
