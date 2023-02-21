@@ -25,7 +25,7 @@ go 1.8
 
 ```
 import (
-    "github.com/ywjt/wsproxy/logger"
+    "github.com/ywjt/wsproxy/gologger"
 )
 func main()  {
     logger := go_logger.NewLogger()
@@ -39,7 +39,7 @@ func main()  {
 
 ```
 import (
-    "github.com/ywjt/wsproxy/logger"
+    "github.com/ywjt/wsproxy/gologger"
 )
 func main()  {
     logger := go_logger.NewLogger()
@@ -57,7 +57,7 @@ func main()  {
 
 ```
 import (
-    "github.com/ywjt/wsproxy/logger"
+    "github.com/ywjt/wsproxy/gologger"
 )
 func main()  {
     logger := go_logger.NewLogger()
@@ -116,25 +116,4 @@ func main()  {
 | Function | function| string | The function name to call logger  | main.main |
 
 >> If you want to customize the format of the log output ?
-
-**config format**:
-```
-consoleConfig := &go_logger.ConsoleConfig{
-    Format: "%millisecond_format% [%level_string%] %body%",
-}
-fileConfig := &go_logger.FileConfig{
-    Format: "%millisecond_format% [%level_string%] %body%",
-}
-```
-**output**:
-```
-2018-03-23 14:55:07.003 [Critical] this is a critical log!
-```
-
->> You can customize the format, Only needs to be satisfied Format: "%Logger Message Alias%"
-
-## More adapter examples
-- [console](./_example/console.go)
-- [file](./_example/file.go)
-- [api](./_example/api.go)
 
