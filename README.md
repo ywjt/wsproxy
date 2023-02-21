@@ -5,7 +5,6 @@ Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以�
 
 ```bash
 /bin/cp -rf {crypto,gologger,gorilla} /usr/local/go/src/
-
 go build wsproxy.go
 ```
 
