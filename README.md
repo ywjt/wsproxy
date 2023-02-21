@@ -4,6 +4,6 @@ Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以�
 编译
 go build wsproxy.go
 
-用法 usage: ./wsproxy -addr 0.0.0.0:1443 -secret test4399
+用法 usage: ./wsproxy -addr 0.0.0.0:1443 -secret test1234
 
 可用参数：./wsproxy -help
