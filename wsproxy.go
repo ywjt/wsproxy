@@ -11,10 +11,10 @@ import (
     "gorilla/websocket"
     "crypto/aes256cbc"
     "gologger"
-	"fmt"
-	"net"
-	"net/http"
-	"os"
+    "fmt"
+    "net"
+    "net/http"
+    "os"
     "os/signal"
     "strings"
     "time"
@@ -44,7 +44,7 @@ var (
     cfgFormSplit   = ""
     cfgFormKey     = "token"
     
-        ws = websocket.Upgrader{}
+    ws     = websocket.Upgrader{}
     logger = gologger.NewLogger()
     
     __VERSION__ = "1.0.0 beta"
@@ -53,12 +53,12 @@ var (
     
     cfgCertFile  = "./cert.pem"
     cfgKeyFile   = "./key.pem"
-    sslOnly     = true
+    sslOnly      = true
     
     codeOK          = 200 //正常握手
-	codeDialErr     = 502 //后端服务不可用或没响应
+    codeDialErr     = 502 //后端服务不可用或没响应
     codeCloseErr    = 503 //后端服务异常断开
-	codeDialTimeout = 504 //后端服务连接超时
+    codeDialTimeout = 504 //后端服务连接超时
 )
 
 type PemTLS struct {
@@ -78,7 +78,7 @@ type LogHandle struct {
     request          string
     status           string
     http_user_agent  string
-	http_x_real_ip   string
+    http_x_real_ip   string
     http_x_forwarded_for string
     hashcode         string
 }
@@ -88,26 +88,25 @@ type LogHandle struct {
 // and non negative integer. Here we cast to an integer
 // and invert it if the result is negative.
 func hashCode(s string) int {
-	v := int(crc32.ChecksumIEEE([]byte(s)))
-	if v >= 0 {
-		return v
-	}
-	if -v >= 0 {
-		return -v
-	}
-	// v == MinInt
-	return 0
+    v := int(crc32.ChecksumIEEE([]byte(s)))
+    if v >= 0 {
+        return v
+    }
+    if -v >= 0 {
+        return -v
+    }
+    // v == MinInt
+    return 0
 }
 
 // Strings hashes a list of strings to a unique hashcode.
 func hashCodes(strings []string) string {
-	var buf bytes.Buffer
+    var buf bytes.Buffer
 
-	for _, s := range strings {
-		buf.WriteString(fmt.Sprintf("%s-", s))
-	}
-
-	return fmt.Sprintf("%d", hashCode(buf.String()))
+    for _, s := range strings {
+        buf.WriteString(fmt.Sprintf("%s-", s))
+    }
+    return fmt.Sprintf("%d", hashCode(buf.String()))
 }
 
 // Ternary operation modle
@@ -136,20 +135,20 @@ func init() {
 
     // Help flag list
     var secret string
-	flag.StringVar(&secret, "secret", "", "The passphrase used to decrypt target server address")
-	flag.StringVar(&cfgGatewayAddr, "addr", cfgGatewayAddr, "Network address for gateway")
-	flag.UintVar(&cfgDialTimeout, "timeout", cfgDialTimeout, "Timeout seconds when dial to targer server")
+    flag.StringVar(&secret, "secret", "", "The passphrase used to decrypt target server address")
+    flag.StringVar(&cfgGatewayAddr, "addr", cfgGatewayAddr, "Network address for gateway")
+    flag.UintVar(&cfgDialTimeout, "timeout", cfgDialTimeout, "Timeout seconds when dial to targer server")
     flag.UintVar(&cfgBufferSize, "buffer", cfgBufferSize, "Buffer size for ReadBuffer()/WriteBuffer()")
     flag.StringVar(&cfgFormSplit, "fsplit", cfgFormSplit, "Split token from formValue, like '?t=xeR7LpmprJS8U...?v=4693225'\n(Exp: -fsplit \"?v=\",0 )  Res: 'xeR7LpmprJS8U...' ")
     flag.StringVar(&cfgFormKey, "frkey", cfgFormKey, "Key name for URL request. like '/?token=xeR7LpmprJS8U...'\n(Exp: -frkey token or -frkey token123) Fmt: ^[a-z]+[0-9]* ")
     flag.StringVar(&cfgCertFile, "ssl_cert", cfgCertFile, "SSL certificate file")
-	flag.StringVar(&cfgKeyFile, "ssl_key", cfgKeyFile, "SSL key file (if separate from cert)")
+    flag.StringVar(&cfgKeyFile, "ssl_key", cfgKeyFile, "SSL key file (if separate from cert)")
     flag.BoolVar(&sslOnly, "ssl_only", false, "Run WSproxy for TLS version")
     flag.BoolVar(&appVersion, "version", false, "Print WSproxy version")
     
-	flag.Parse()
+    flag.Parse()
     cfgSecret = string(secret)
-	cfgDialTimeout = uint(time.Second) * cfgDialTimeout
+    cfgDialTimeout = uint(time.Second) * cfgDialTimeout
     cfgFormSplit = strings.Replace(cfgFormSplit, " ", "", -1)
     cfgFormKey = strings.TrimSpace(cfgFormKey)
     cfgFormKey = strings.ToLower(cfgFormKey)
@@ -300,16 +299,16 @@ func logHandle(c net.Conn, r *http.Request, remote_addr string, runTime time.Dur
     logh.hashcode   = If(hashCode=="", "-", hashCode).(string)
     
     logger.Infof("%v %s \"net:%s->%s\" \"%s\" %s \"%s\" %s %s \"User-hash:%s\"", 
-               logh.request_time,
-               logh.remote_addr,
-               logh.server_addr_port,
-               logh.target_addr_port, 
-               logh.request,
-               logh.status,
-               logh.http_user_agent,
-               logh.http_x_forwarded_for,
-               logh.http_x_real_ip,
-               logh.hashcode)
+		logh.request_time,
+		logh.remote_addr,
+		logh.server_addr_port,
+		logh.target_addr_port, 
+		logh.request,
+		logh.status,
+		logh.http_user_agent,
+		logh.http_x_forwarded_for,
+		logh.http_x_real_ip,
+		logh.hashcode)
 }
 
 
@@ -361,13 +360,13 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
     fromValueTrim = strings.Replace(r.FormValue(cfgFormKey), " ", "+", -1)
     encrypted := strings.TrimSpace(fromValueTrim)
     
-    //Token切割取样,某些时候可能会带?号,加上-fsplit可以用于切割
+    //Token切割取样,某些时候可能会带?号, 加上-fsplit可以用于切割
     if cfgFormSplit != "" {
         if strings.Contains(encrypted, cfgLfSplit) {
             encrypted = strings.Split(encrypted, cfgLfSplit)[cfgRfSplit]
         }
     }
-    
+    // AES256cbc解密算法
     raddr, err := aes256cbc.DecryptString(cfgSecret, encrypted)
     //处理掉一些加密过程中的特殊字符, 如空格 \r\n
     raddr = strings.TrimSpace(raddr)
@@ -386,12 +385,14 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
         go logHandle(client, r, raddr, time.Since(_t), codeDialTimeout, _h)
         return
 	}
+	
 	if err != nil {
 		//logger.Criticalf("tcpServer failed to connect, %s", err)
         //502 后端服务不可用或没响应
         go logHandle(client, r, raddr, time.Since(_t), codeDialErr, _h)
 		return
 	}
+	
 	defer client.Close()
     //==================
     
@@ -428,7 +429,7 @@ func handleWs(w http.ResponseWriter, r *http.Request) {
             )
             **/
             if err != nil {
-                //503 后端服务异常断开 (!=1001/1005)
+                //503 后端服务异常断开 (!=1000/1001/1005)
                 if websocket.IsUnexpectedCloseError(err,
                                                     websocket.CloseNormalClosure,
                                                     websocket.CloseGoingAway, 
