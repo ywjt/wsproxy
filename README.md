@@ -76,6 +76,12 @@ U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 
 
 ### 请求方法
+
 ```
 ws://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
+```
+
+支持开启TLS：
+```
+wss://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 ```
