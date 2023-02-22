@@ -1,6 +1,8 @@
 # wsproxy
-Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以直接用原来的tcp服务器，然后客户端用websocket进行通信。
 
+[![GoDoc](https://godoc.org/github.com/ywjt/wsproxy?status.svg)](https://godoc.org/github.com/ywjt/wsproxy)
+
+Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以直接用原来的tcp服务器，然后客户端用websocket进行通信。
 ```
 - 高并发性能，资源消耗低
 - 支持ws、wss服务协议
