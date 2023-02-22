@@ -8,19 +8,19 @@ Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以�
 - 没有多余的配置，可作为全局代理网关
 ```
 
-###编译:
+### 编译:
 
 ```bash
 /bin/cp -rf {crypto,gologger,gorilla} /usr/local/go/src/
 go build wsproxy.go
 ```
 
-###用法:
+### 用法:
 ```bash
 usage: ./wsproxy -addr 0.0.0.0:1443 -secret test1234
 ```
 
-###可用参数：
+### 可用参数：
 
 ```help
 [root@~ ]# ./wsproxy -h
@@ -50,7 +50,7 @@ Usage of ./wsproxy:
         Print WSproxy version
 ```
 
-###加密：
+### 加密：
 
 客户端发送到网关的目标服务器地址使用AES256-CBC加密并进行base64编码，密文以换行符结尾。
 
@@ -75,7 +75,7 @@ U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 注：上述方式都会使用随机Salt，这也是建议的方式。其结果是每次加密得出的密文结果并不一样，但并不会影响解密。
 
 
-###请求方法
+### 请求方法
 ```
 ws://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 ```
