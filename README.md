@@ -7,6 +7,10 @@ Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以�
 - 使用aes加密算法，后端ip地址不直接对外
 - 没有多余的配置，可作为全局代理网关
 ```
+### 性能测试
+<img src='https://github.com/ywjt/wsproxy/blob/main/wsproxy_performance_testing.png'> 
+PS: Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz、4核、16G
+
 
 ### 编译:
 
