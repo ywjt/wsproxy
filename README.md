@@ -2,6 +2,9 @@
 
 Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以直接用原来的tcp服务器，然后客户端用websocket进行通信。
 ```
+- [新增]支持 text/binary 转发流格式
+- [新增]支持 tcp/udp 后端代理协议
+- [新增]支持 max_conns 最大代理连接数
 - 高并发性能，资源消耗低
 - 支持ws、wss服务协议
 - 使用aes加密算法，后端ip地址不直接对外
@@ -44,6 +47,11 @@ Usage of ./wsproxy:
   -fsplit string
         Split token from formValue, like '?t=xeR7LpmprJS8U...?v=4693225'
         (Exp: -fsplit "?v=",0 )  Res: 'xeR7LpmprJS8U...' 
+  -max_conns uint
+        Max connections to slots available. (default 65536)
+  -proto string
+        Websocket to TCP/UDP socket proxy.
+        (Exp: -proto tcp or -proto udp ) (default "tcp")
   -secret string
         The passphrase used to decrypt target server address
   -ssl_cert string
@@ -52,6 +60,9 @@ Usage of ./wsproxy:
         SSL key file (if separate from cert) (default "./key.pem")
   -ssl_only
         Run WSproxy for TLS version
+  -stream string
+        Buffer stream format for (text, bin).
+        (Exp: -stream bin or -stream text ) (default "bin")
   -timeout uint
         Timeout seconds when dial to targer server (default 3)
   -version
