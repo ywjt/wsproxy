@@ -15,10 +15,11 @@ PS: CPU E5-2699 v3 2.30GHz、8核、16G (仅开4个核)。 支持 1W并发连接
 ### 编译:
 
 ```bash
-
+#进入主目录
 export PATH=$PATH:/usr/local/go/bin:`pwd`
 export GOPATH=`pwd`
 
+cd wsproxy
 go build .
 ```
 
