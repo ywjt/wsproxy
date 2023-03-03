@@ -49,7 +49,7 @@ type LogStruck struct {
 }
 
 //记录一条请求日志集
-func (logh *LogStruck) logHandle() {
+func (logh *LogStruck) Out() {
     logger.Infof("%v %s \"net:%s->%s\" \"%s\" %s \"%s\" %s %s \"User-Id:%s\"", 
                logh.request_time,
                logh.remote_addr,
@@ -64,7 +64,7 @@ func (logh *LogStruck) logHandle() {
 }
 
 
-func Slc(c net.Conn, r *http.Request, raddr string, runTime time.Duration, stCode int, hashCode string) *LogStruck {
+func log(c net.Conn, r *http.Request, raddr string, runTime time.Duration, stCode int, hashCode string) *LogStruck {
     var local_addr = ""
     //var remote_addr = ""
     x_real_ip := r.Header.Get("X-Real-IP")
