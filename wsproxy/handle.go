@@ -124,12 +124,12 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
 	//timeout
     if ne, ok := err.(net.Error); ok && ne.Timeout() {
         //504 后端服务连接超时
-        go Slc(sock, r, raddr, time.Since(_t), codeDialTimeout, _h).logHandle()
+        go log(sock, r, raddr, time.Since(_t), codeDialTimeout, _h).Out()
         return
 	}
 	if err != nil {
         //502 后端服务不可用或没响应
-        go Slc(sock, r, raddr, time.Since(_t), codeDialErr, _h).logHandle()
+        go log(sock, r, raddr, time.Since(_t), codeDialErr, _h).Out()
 		return
 	}
 
@@ -137,7 +137,7 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
 	client := p_worker{_h, format, ws, sock}
     
     //记录一条请求日志集
-    go Slc(sock, r, raddr, time.Since(_t), codeOK, _h).logHandle()
+    go log(sock, r, raddr, time.Since(_t), codeOK, _h).Out()
     //==================
 
 	lock.Lock()
