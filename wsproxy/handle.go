@@ -34,6 +34,13 @@ var (
     codeDialTimeout = 504 //后端服务连接超时
 )
 
+type p_worker struct {
+	key  string
+	format int
+	ws *websocket.Conn
+	sock net.Conn
+}
+
 func setMaxConns(n int) { max_connections = n }
 
 
@@ -144,13 +151,6 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
 	pool[client.key] = client
 	pool[client.key].start()
 	lock.Unlock()
-}
-
-type p_worker struct {
-	key  string
-	format int
-	ws *websocket.Conn
-	sock net.Conn
 }
 
 func (p p_worker) start() {
