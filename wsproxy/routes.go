@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-    //run http nomal
+    //run http normal
     http.HandleFunc("/status", url_status)
     http.HandleFunc("/ok", url_check)
     //...
