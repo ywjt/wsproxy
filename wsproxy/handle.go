@@ -116,7 +116,7 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
 	switch cfgBuffFormat {
         case "text": format = websocket.TextMessage
         case "bin": format = websocket.BinaryMessage
-        default: format = websocket.TextMessage
+        default: format = websocket.BinaryMessage
 	}
 
 	//连接后端TCP
