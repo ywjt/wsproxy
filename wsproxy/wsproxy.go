@@ -32,7 +32,6 @@ var (
     cfgFormSplit   = ""
     cfgFormKey     = "token"
     
-    __VERSION__ = "2.0.0 beta"
     __SSL_TLS__ = "No support (no cert file)"
     appVersion  = true
     
