@@ -13,9 +13,9 @@ import (
     "crypto/aes256cbc"
     "io"
     "net"
-	"net/http"
-	"bufio"
-	"sync"
+    "net/http"
+    "bufio"
+    "sync"
     "time"
     "fmt"
     "strings"
@@ -29,9 +29,9 @@ var (
     lock = sync.Mutex{}
     
     codeOK          = 200 //正常握手
-	codeDialErr     = 502 //后端服务不可用或没响应
+    codeDialErr     = 502 //后端服务不可用或没响应
     codeCloseErr    = 503 //后端服务异常断开
-	codeDialTimeout = 504 //后端服务连接超时
+    codeDialTimeout = 504 //后端服务连接超时
 )
 
 func setMaxConns(n int) { max_connections = n }
