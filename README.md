@@ -2,8 +2,8 @@
 
 Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以直接用原来的tcp服务器，然后客户端用websocket进行通信。
 ```
-WSproxy v2.0.0 beta
-
+WSproxy v2.1.0 beta
+- [优化]内存分配，减轻GC压力
 - [新增]支持 text/binary 转发流格式
 - [新增]支持 tcp/udp 后端代理协议
 - [新增]支持 max_conns 最大代理连接数
