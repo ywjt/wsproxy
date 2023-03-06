@@ -32,6 +32,8 @@ var (
     codeDialErr     = 502 //后端服务不可用或没响应
     codeCloseErr    = 503 //后端服务异常断开
     codeDialTimeout = 504 //后端服务连接超时
+	
+    copyBufPool      sync.Pool
 )
 
 type p_worker struct {
@@ -46,7 +48,12 @@ func setMaxConns(n int) { max_connections = n }
 
 func init() {
     //run websocket
-     http.HandleFunc("/", handleWs)
+    http.HandleFunc("/", handleWs)
+	
+    copyBufPool.New = func() interface{} {
+        buf := make([]byte, cfgBufferSize)
+        return &buf
+    }
 }
 
 
@@ -171,27 +178,29 @@ func (p p_worker) release() {
 // Socket stream to Websocket channel
 func (p *p_worker) backend() {
 	reader := bufio.NewReader(p.sock)
-	buf := make([]byte, cfgBufferSize)
+	//buf := make([]byte, cfgBufferSize)
+	b := copyBufPool.Get().(*[]byte)
+        buf := *b
 	for {
-		// Read from Socket
-		n, err := reader.Read(buf)
-		if err != nil {
-            if err == io.EOF {
-                logger.Noticef("[Sock -> Ws] socket read error '%s', User-Id:%s", err, p.key)
-                //500 后端异常断开
+            // Read from Socket
+	    n, err := reader.Read(buf)
+	    if err != nil {
+                if err == io.EOF {
+                    logger.Noticef("[Sock -> Ws] socket read error '%s', User-Id:%s", err, p.key)
+                    //500 后端异常断开
+                 }
+                 break
             }
-            break
-        }
         
-		// Write to Websocket
-		err = p.ws.WriteMessage(p.format, buf[:n])
-		if err != nil {
-            logger.Errorf("[Sock -> Ws] websocket write error: %s, User-Id:%s", err, p.key)
-            //400 WS代理同步写异常
-            break
-        }
+            // Write to Websocket
+            err = p.ws.WriteMessage(p.format, buf[:n])
+            if err != nil {
+                logger.Errorf("[Sock -> Ws] websocket write error: %s, User-Id:%s", err, p.key)
+                //400 WS代理同步写异常
+                break
+            }
 	}
-    
+        copyBufPool.Put(b)
 	p.release()
 }
 
