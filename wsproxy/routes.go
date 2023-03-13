@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 // @Author: YWJT / ZhiQiang Koo
-// @Modify: 2023-03-03  
+// @Modify: 2023-03-13  
 //
 
 package main
@@ -24,7 +24,13 @@ func init() {
 func url_status(w http.ResponseWriter, r *http.Request) {
     logger.Info(r.URL.String())
     w.Header().Set("Server", fmt.Sprintf("WSproxy v%s\n", __VERSION__))
-	html := "====== Hello WSproxy! ======\n" + fmt.Sprintf("Conns available: %v\n", len(pool))
+	//html := "====== Hello WSproxy! ======\n" + fmt.Sprintf("Conns available: %v\n", len(pool))
+    html := fmt.Sprintf(`====== Hello WSproxy! ======
+    UUID: %s
+    Conns available: %v
+    `, 
+      serverUUID,
+      len(pool))
     
 	_, err := w.Write([]byte(html))
 	if err != nil {
