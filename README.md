@@ -97,7 +97,7 @@ U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 
 
 ### 请求方法
-
+**加密方式：**
 ```
 ws://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 ```
@@ -105,4 +105,10 @@ ws://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 支持开启TLS：
 ```
 wss://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
+```
+
+**非加密方式：**
+```
+ws://your-domain:1443/?token=127.0.0.1:80
+wss://your-domain:1443/?token=127.0.0.1:80
 ```
