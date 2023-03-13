@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 // @Author: YWJT / ZhiQiang Koo
-// @Modify: 2023-03-03
+// @Modify: 2023-03-13
 //
 
 package main
@@ -14,6 +14,7 @@ import (
     "flag"
     "strconv"
     "regexp"
+    "github.com/google/uuid"
 )
 
 
@@ -22,6 +23,7 @@ var (
     cfgSecret  string
     cfgLfSplit string
     cfgRfSplit int
+    serverUUID     = uuid.New().String()
     
     cfgGatewayAddr = "0.0.0.0:1443"
     cfgDialTimeout = uint(3)
@@ -32,12 +34,13 @@ var (
     cfgFormSplit   = ""
     cfgFormKey     = "token"
     
-    __SSL_TLS__ = "No support (no cert file)"
-    appVersion  = true
-    
     cfgCertFile  = "./cert.pem"
     cfgKeyFile   = "./key.pem"
+    appVersion  = true
     sslOnly     = true
+    aesOnly     = true
+    
+    __SSL_TLS__ = "No support (no cert file)"
 )
 
 func version() {
@@ -60,6 +63,7 @@ func init() {
     flag.StringVar(&cfgCertFile, "ssl_cert", cfgCertFile, "SSL certificate file")
 	flag.StringVar(&cfgKeyFile, "ssl_key", cfgKeyFile, "SSL key file (if separate from cert)")
     flag.BoolVar(&sslOnly, "ssl_only", false, "Run WSproxy for TLS version")
+    flag.BoolVar(&aesOnly, "aes_only", false, "Run WSproxy on encryption mode for AES")
     flag.BoolVar(&appVersion, "version", false, "Print WSproxy version")
     
 	flag.Parse()
@@ -122,6 +126,7 @@ func main() {
 
     pid := NewSignal()
     runInfo := fmt.Sprintf(`============= WSproxy running: OK , [%v] =============
+UUID:          %s
 Version:       %s
 Address:       %s
 SSL/TLS:       %s
@@ -136,6 +141,7 @@ Process ID:    %d
 =============
 `,
         time.Unix(time.Now().Unix(), 0),
+        serverUUID,
         __VERSION__,
         cfgGatewayAddr,
         __SSL_TLS__,
