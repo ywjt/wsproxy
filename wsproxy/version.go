@@ -7,6 +7,6 @@
 
 package main
 
-var __VERSION__ = "2.0.0 beta"
+var __VERSION__ = "2.1.0 beta"
 
 
