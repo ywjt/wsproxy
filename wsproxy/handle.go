@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 // @Author: YWJT / ZhiQiang Koo
-// @Modify: 2023-03-03  
+// @Modify: 2023-03-13  
 //
 
 package main
@@ -91,7 +91,6 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
     //启用Websocket
     ws, err := upgrader.Upgrade(w, r, nil)
     if _, ok := err.(websocket.HandshakeError); ok {
-        //logger.Warningf("Not a websocket handshake, %s", err)
         return
     } else if err != nil {
 		logger.Warningf("webSocket upgrade err, %s", err)
@@ -118,13 +117,15 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
         }
     }
     
-    raddr, err := aes256cbc.DecryptString(cfgSecret, encrypted)
-    //处理掉一些加密过程中的特殊字符, 如空格 \r\n
-    raddr = strings.TrimSpace(raddr)
-    if err != nil {
-        logger.Errorf("Decrypt an error occurred: %s, Encrypt: %s", err, encrypted)
+   // 同时兼容加密与非加密token,也可强制使用加密
+    raddr := tokenModel(aesOnly, encrypted)
+    if raddr == "__CANTNOT_DECRYPT__" {
+        ws.Close()
         return
     }
+    
+    //处理掉一些加密过程中的特殊字符, 如空格 \r\n
+    raddr = strings.TrimSpace(raddr)
     
 	var format int
 	switch cfgBuffFormat {
@@ -139,11 +140,13 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
     if ne, ok := err.(net.Error); ok && ne.Timeout() {
         //504 后端服务连接超时
         go log(sock, r, raddr, time.Since(_t), codeDialTimeout, _h).Out()
+        ws.Close()
         return
 	}
 	if err != nil {
         //502 后端服务不可用或没响应
         go log(sock, r, raddr, time.Since(_t), codeDialErr, _h).Out()
+        ws.Close()
 		return
 	}
 
@@ -160,6 +163,29 @@ func handleWs(w http.ResponseWriter, r* http.Request) {
 	lock.Unlock()
 }
 
+
+func aesDecrypt(encrypted string) string{
+    _a, err := aes256cbc.DecryptString(cfgSecret, encrypted)
+    if err != nil {
+        logger.Errorf("Decrypt an error occurred: %s, Encrypt: %s", err, encrypted)
+        return "__CANTNOT_DECRYPT__"
+    }
+    return _a
+}
+
+func tokenModel(aes bool, encrypted string) string{
+    if aes == true {
+        return aesDecrypt(encrypted)
+    }
+    
+    if len(strings.Split(encrypted, ":")) == 2 {
+        return encrypted
+    }else{
+        return aesDecrypt(encrypted)
+    }
+}
+
+
 func (p p_worker) start() {
 	go p.frontend()
 	go p.backend()
@@ -173,7 +199,6 @@ func (p p_worker) release() {
 	delete(pool, p.key)
 	lock.Unlock()
 }
-
 
 // Socket stream to Websocket channel
 func (p *p_worker) backend() {
