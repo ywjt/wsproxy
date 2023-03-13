@@ -41,6 +41,8 @@ usage: ./wsproxy -addr 0.0.0.0:1443 -secret test1234
 Usage of ./wsproxy:
   -addr string
         Network address for gateway (default "0.0.0.0:1443")
+  -aes_only
+        Run WSproxy on encryption mode for AES
   -buffer uint
         Buffer size for ReadBuffer()/WriteBuffer() (default 65536)
   -frkey string
