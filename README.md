@@ -16,7 +16,7 @@ WSproxy v2.2.1 beta
 ```
 ### 性能测试
 <img src='https://github.com/ywjt/wsproxy/blob/main/doc/wsproxy_performance_testing.png'> 
-PS: CPU E5-2699 v3 2.30GHz、8核、16G (仅开4个核)。 支持 1W并发连接，20W pps。
+PS: CPU E5-2699 v3 2.30GHz、8核、16G (仅开4个核)。 保守支持 1W并发连接，20W pps。
 
 
 ### 编译:
