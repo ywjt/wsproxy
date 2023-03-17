@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 // @Author: YWJT / ZhiQiang Koo
-// @Modify: 2023-03-03  
+// @Modify: 2023-03-03
 //
 
 package main
@@ -14,6 +14,7 @@ import (
 	"fmt"
     "time"
     "strconv"
+    "gorilla/websocket"
 )
 
 var logger = gologger.NewLogger()
@@ -64,16 +65,16 @@ func (logh *LogStruck) Out() {
 }
 
 
-func log(c net.Conn, r *http.Request, raddr string, runTime time.Duration, stCode int, hashCode string) *LogStruck {
+func log(c net.Conn, wc *websocket.Conn, r *http.Request, raddr string, runTime time.Duration, stCode int, hashCode string) *LogStruck {
     var local_addr = ""
-    //var remote_addr = ""
     x_real_ip := r.Header.Get("X-Real-IP")
     x_forwarded_for := r.Header.Get("X-Forwarded-For")
     user_agent := r.Header.Get("User-Agent")
     
     if c != nil {
-        local_addr  = c.LocalAddr().String()
-        //remote_addr = c.RemoteAddr().String()
+        local_addr = c.LocalAddr().String()
+    } else if wc != nil {
+        local_addr = wc.LocalAddr().String()
     }
     
     request_time := runTime
@@ -98,3 +99,40 @@ func log(c net.Conn, r *http.Request, raddr string, runTime time.Duration, stCod
                        hashcode}
 
 }
+
+/*
+func logw(w *websocket.Conn, r *http.Request, raddr string, runTime time.Duration, stCode int, hashCode string) *LogStruck {
+    var local_addr = ""
+    //var remote_addr = ""
+    x_real_ip := r.Header.Get("X-Real-IP")
+    x_forwarded_for := r.Header.Get("X-Forwarded-For")
+    user_agent := r.Header.Get("User-Agent")
+    
+    if w != nil {
+        local_addr  = w.LocalAddr().String()
+        //remote_addr = w.RemoteAddr().String()
+    }
+    
+    request_time := runTime
+    remote_addr,_,_ := net.SplitHostPort(r.RemoteAddr)
+    http_x_real_ip  := If(x_real_ip=="", "-", x_real_ip).(string)
+    http_x_forwarded_for := If(x_forwarded_for=="", "-", x_forwarded_for).(string)
+    server_addr_port := If(local_addr=="", "-:nil", local_addr).(string)
+    target_addr_port := If(raddr=="", "-:nil", raddr).(string)
+    request    := fmt.Sprintf("%s %s %s", r.Method, r.RequestURI, r.Proto)
+    status     := strconv.Itoa(stCode)
+    http_user_agent := If(user_agent=="", "-", user_agent).(string)
+    hashcode   := If(hashCode=="", "-", hashCode).(string)
+    
+    return &LogStruck{request_time, 
+                       remote_addr, 
+                       server_addr_port, 
+                       target_addr_port, 
+                       request, status, 
+                       http_user_agent, 
+                       http_x_real_ip, 
+                       http_x_forwarded_for, 
+                       hashcode}
+
+}
+*/
