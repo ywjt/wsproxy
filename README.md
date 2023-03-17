@@ -113,3 +113,14 @@ wss://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 ws://your-domain:1443/?token=127.0.0.1:80
 wss://your-domain:1443/?token=127.0.0.1:80
 ```
+
+**按代理协议请求**
+网关能复用代理端口进行不同后端协议的转换。
+| 请求URL | 后端协议 | 说明 |
+| ---- | ---- |
+| /?token= | TCP | 从网关WS/WSS --> 后端TCP (必须是tcp协议) |
+| /udp?token= | UDP | 从网关WS/WSS --> 后端UDP (必须是udp协议) |
+| /ws?token= | WS | 从网关WS/WSS --> 后端WS (必须是ws协议) |
+
+
+
