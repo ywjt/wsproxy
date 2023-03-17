@@ -64,7 +64,7 @@ Usage of ./wsproxy:
   -ssl_only
         Run WSproxy for TLS version
   -stream string
-        Buffer stream format for (text, bin).
+        Buffer stream format for (text, bin). Only TCP/UDP backend.
         (Exp: -stream bin or -stream text ) (default "bin")
   -timeout uint
         Timeout seconds when dial to targer server (default 3)
