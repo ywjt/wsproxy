@@ -101,17 +101,21 @@ U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 **加密方式：**
 ```
 ws://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
+ws://your-domain:1443/ws?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 ```
 
 支持开启TLS：
 ```
 wss://your-domain:1443/?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
+wss://your-domain:1443/ws?token=U2FsdGVkX1+G76LHp6mvNpyMSqR1WoGGTcSLIyD+/7A=
 ```
 
 **非加密方式：**
 ```
 ws://your-domain:1443/?token=127.0.0.1:80
 wss://your-domain:1443/?token=127.0.0.1:80
+ws://your-domain:1443/ws?token=127.0.0.1:80
+wss://your-domain:1443/ws?token=127.0.0.1:80
 ```
 
 **按代理协议请求**
@@ -121,8 +125,8 @@ wss://your-domain:1443/?token=127.0.0.1:80
 | 请求URL | 后端协议 | 说明 |
 | :---- | :----: | :---- |
 | /?token= | TCP | 从网关WS/WSS --> 后端TCP (必须是tcp协议) |
-| /udp?token= | UDP | 从网关WS/WSS --> 后端UDP (必须是udp协议) |
+| /udp?token= | UDP | 从网关WS/WSS --> 后端UDP (未测试) |
 | /ws?token= | WS | 从网关WS/WSS --> 后端WS (必须是ws协议) |
 
-
+*注意必须匹配好对应的后端协议，否则代理不成功。
 
