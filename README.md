@@ -46,7 +46,7 @@ Usage of ./wsproxy:
   -aes_only
         Run WSproxy on encryption mode for AES
   -buffer uint
-        Buffer size for ReadBuffer()/WriteBuffer() (default 65536)
+        Buffer size for ReadBuffer()/WriteBuffer() (default 1024)
   -frkey string
         Key name for URL request. like '/?token=xeR7LpmprJS8U...'
         (Exp: -frkey token or -frkey token123) Fmt: ^[a-z]+[0-9]*  (default "token")
@@ -55,9 +55,6 @@ Usage of ./wsproxy:
         (Exp: -fsplit "?v=",0 )  Res: 'xeR7LpmprJS8U...' 
   -max_conns uint
         Max connections to slots available. (default 65536)
-  -proto string
-        Websocket to TCP/UDP socket proxy.
-        (Exp: -proto tcp or -proto udp ) (default "tcp")
   -secret string
         The passphrase used to decrypt target server address
   -ssl_cert string
