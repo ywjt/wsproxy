@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 // @Author: YWJT / ZhiQiang Koo
-// @Modify: 2023-03-13
+// @Modify: 2023-03-16
 //
 
 package main
@@ -27,9 +27,8 @@ var (
     
     cfgGatewayAddr = "0.0.0.0:1443"
     cfgDialTimeout = uint(3)
-    cfgBufferSize  = uint(64 * 1024)
+    cfgBufferSize  = uint(1 * 1024)
     cfgMaxConns    = uint(64 * 1024)
-    cfgBuffProto   = "tcp"  // {tcp, udp}
     cfgBuffFormat  = "bin"  // {bin, text}
     cfgFormSplit   = ""
     cfgFormKey     = "token"
@@ -39,8 +38,10 @@ var (
     appVersion  = true
     sslOnly     = true
     aesOnly     = true
+    PProto      = true
     
     __SSL_TLS__ = "No support (no cert file)"
+    __PPROTO__ = "disable"
 )
 
 func version() {
@@ -56,14 +57,14 @@ func init() {
 	flag.UintVar(&cfgDialTimeout, "timeout", cfgDialTimeout, "Timeout seconds when dial to targer server")
     flag.UintVar(&cfgBufferSize, "buffer", cfgBufferSize, "Buffer size for ReadBuffer()/WriteBuffer()")
     flag.UintVar(&cfgMaxConns, "max_conns", cfgMaxConns, "Max connections to slots available.")
-    flag.StringVar(&cfgBuffProto, "proto", cfgBuffProto, "Websocket to TCP/UDP socket proxy.\n(Exp: -proto tcp or -proto udp )")
-    flag.StringVar(&cfgBuffFormat, "stream", cfgBuffFormat, "Buffer stream format for (text, bin).\n(Exp: -stream bin or -stream text )")
+    flag.StringVar(&cfgBuffFormat, "stream", cfgBuffFormat, "Buffer stream format for (text, bin). Only TCP/UDP backend.\n(Exp: -stream bin or -stream text )")
     flag.StringVar(&cfgFormSplit, "fsplit", cfgFormSplit, "Split token from formValue, like '?t=xeR7LpmprJS8U...?v=4693225'\n(Exp: -fsplit \"?v=\",0 )  Res: 'xeR7LpmprJS8U...' ")
     flag.StringVar(&cfgFormKey, "frkey", cfgFormKey, "Key name for URL request. like '/?token=xeR7LpmprJS8U...'\n(Exp: -frkey token or -frkey token123) Fmt: ^[a-z]+[0-9]* ")
     flag.StringVar(&cfgCertFile, "ssl_cert", cfgCertFile, "SSL certificate file")
 	flag.StringVar(&cfgKeyFile, "ssl_key", cfgKeyFile, "SSL key file (if separate from cert)")
     flag.BoolVar(&sslOnly, "ssl_only", false, "Run WSproxy for TLS version")
     flag.BoolVar(&aesOnly, "aes_only", false, "Run WSproxy on encryption mode for AES")
+    flag.BoolVar(&PProto, "proxyproto", false, "Enable proxy protocol mode, Requires backend server support")
     flag.BoolVar(&appVersion, "version", false, "Print WSproxy version")
     
 	flag.Parse()
@@ -72,9 +73,9 @@ func init() {
     cfgFormSplit = strings.Replace(cfgFormSplit, " ", "", -1)
     cfgFormKey = strings.TrimSpace(cfgFormKey)
     cfgFormKey = strings.ToLower(cfgFormKey)
-    cfgBuffProto = strings.ToLower(cfgBuffProto)
     cfgBuffFormat = strings.ToLower(cfgBuffFormat)
     __SSL_TLS__ = If(sslOnly==true, "support", __SSL_TLS__).(string)
+    __PPROTO__ = If(PProto==true, "enable", __PPROTO__).(string)
 }
 
 func main() {
@@ -111,11 +112,6 @@ func main() {
         return
     }
     
-    if cfgBuffProto != "tcp" && cfgBuffProto != "udp" {
-        fmt.Printf("Missing passphrase, '-proto %s' No support.\n", cfgBuffProto)
-        return
-    }
-    
     if cfgBuffFormat != "bin" && cfgBuffFormat != "text" {
         fmt.Printf("Missing passphrase, '-stream %s' No support.\n", cfgBuffFormat)
         return
@@ -130,11 +126,10 @@ UUID:          %s
 Version:       %s
 Address:       %s
 SSL/TLS:       %s
+Proxy Proto:   %s
 Dial Timeout:  %s
 Max Connects:  %d
 Buffer Size:   %d
-Buffer proto:  %s
-Buffer Stream: %s
 Passphrase:    %s
 URL Request:   /?%s=
 Process ID:    %d
@@ -145,17 +140,17 @@ Process ID:    %d
         __VERSION__,
         cfgGatewayAddr,
         __SSL_TLS__,
+        __PPROTO__,
         time.Duration(cfgDialTimeout),
         cfgMaxConns,
         cfgBufferSize,
-        cfgBuffProto,
-        cfgBuffFormat,
         cfgSecret,
         cfgFormKey,
         pid)
     
     logger.Flush()
     
+    //runtime.GOMAXPROCS(runtime.NumCPU())
     NewServer(cfgGatewayAddr, 
               cfgCertFile, 
                cfgKeyFile, 
@@ -163,4 +158,3 @@ Process ID:    %d
                   runInfo).start()
     
 }
-

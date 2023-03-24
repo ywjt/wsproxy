@@ -11,6 +11,7 @@ package main
 import (
     "gorilla/websocket"
     "crypto/aes256cbc"
+    "proxyproto"
     "io"
     "net"
     "net/http"
@@ -105,9 +106,16 @@ func handleShake(w http.ResponseWriter, r *http.Request) (ws *websocket.Conn, ra
         EnableCompression: true,
     }
     
-    w.Header().Set("Access-Control-Allow-Origin", "*")
+    //make header
+    //w.Header().Set("Access-Control-Allow-Origin", "*")
+    //w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With")
+    //w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+    x_real_ip := strings.Split(r.Header.Get("X-Forwarded-For"), ",")[0]
+    x_remote_addr,_,_ := net.SplitHostPort(r.RemoteAddr)
+    x_real_ip = If(x_real_ip == "", x_remote_addr, x_real_ip).(string)
+    w.Header().Set("X-Real-IP", x_real_ip)
     
-    ws, err := upgrader.Upgrade(w, r, nil)
+    ws, err := upgrader.Upgrade(w, r, w.Header())
     if _, ok := err.(websocket.HandshakeError); ok {
         return
     } else if err != nil {
@@ -169,7 +177,7 @@ func handles(w http.ResponseWriter, r *http.Request, pt string) {
     switch pt {
         case "wss":
             //connect WS/WSS client
-            wc, _, err := websocket.DefaultDialer.Dial("ws://"+raddr+"/", nil)
+            wc, _, err := websocket.DefaultDialer.Dial("ws://"+raddr+"/", w.Header())
             if err != nil {
                 //502 bad gateway
                 go log(nil, wc, r, raddr, time.Since(_t), codeDialErr, _h).Out()
@@ -198,6 +206,36 @@ func handles(w http.ResponseWriter, r *http.Request, pt string) {
                 return
             }
         
+        
+            /*********************************************************
+            // 构造一个代理协议头部
+            // 如果前端还有代理服务，应在前端同时配置代理协议
+            // 目前腾讯云/阿里云均支持 proxy-protocol
+            //   <nginx stream> :
+            //     listen 80 proxy_protocol;
+            //     listen 443 ssl proxy_protocol;
+            //
+            //   <haproxy tcp> :
+            //     server smtp 127.0.0.1:2319 send-proxy    #IPV4 V1
+            //     server smtp 127.0.0.1:2319 send-proxy-v2 #IPV4 V2
+            // 
+            // X-Forwarded-For 经过多层转发后，每被转发一次都会依次记录请求源地址
+            // 只需要读取第一个字端，即是客户端的真实IP
+            //
+            // PS: 直接请求网关时 X-Forwarded-For没有值，使用RemoteAddr函数，
+            // 即可以获得真实IP。当 X-Forwarded-For 有值时，即用 X-Forwarded-For
+            // 替换 RemoteAddr的值。
+            **********************************************************/
+            if PProto==true {
+                x_real_ip := strings.Split(r.Header.Get("X-Forwarded-For"), ",")[0]
+                x_localaddr := r.RemoteAddr
+                if x_real_ip != "" {
+                    x_localaddr = strings.Replace(x_localaddr, "127.0.0.1", x_real_ip, -1)
+                }
+                // 连接TCP后端成功后，发送第一条信息为 proxy-protocol报文
+                send_proxyproto(sock, x_localaddr, raddr)
+            }
+        
             //add a worker
             client = p_worker{_h, format, ws, nil, sock}
             //record a log
@@ -208,6 +246,27 @@ func handles(w http.ResponseWriter, r *http.Request, pt string) {
 	pool[client.key] = client
 	pool[client.key].start(pt)
 	lock.Unlock()
+}
+
+
+func send_proxyproto(c net.Conn, laddr, raddr string) bool{
+    l_addr,_ := net.ResolveTCPAddr("tcp", laddr)
+    r_addr,_ := net.ResolveTCPAddr("tcp", raddr)
+    
+    _header := &proxyproto.Header{
+                Version:            1,
+                Command:            proxyproto.PROXY,
+                TransportProtocol:  proxyproto.TCPv4,
+                SourceAddr: l_addr,
+                DestinationAddr: r_addr,
+    }
+
+    _, err := _header.WriteTo(c)
+    if err != nil {
+        logger.Errorf("Error: %s", err.Error())
+        return false
+    }
+    return true
 }
 
 func aesDecrypt(encrypted string) string{
