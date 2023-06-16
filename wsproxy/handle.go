@@ -113,6 +113,7 @@ func handleShake(w http.ResponseWriter, r *http.Request) (ws *websocket.Conn, ra
     x_real_ip := strings.Split(r.Header.Get("X-Forwarded-For"), ",")[0]
     x_remote_addr,_,_ := net.SplitHostPort(r.RemoteAddr)
     x_real_ip = If(x_real_ip == "", x_remote_addr, x_real_ip).(string)
+    w.Header().Set("X-Forwarded-For", x_real_ip)
     w.Header().Set("X-Real-IP", x_real_ip)
     
     ws, err := upgrader.Upgrade(w, r, w.Header())
