@@ -29,7 +29,7 @@ export PATH=$PATH:/usr/local/go/bin:`pwd`
 export GOPATH=`pwd`
 
 cd wsproxy
-go build .  #按提示还需要安装必须的依赖
+go build .  #可能还需要安装必须的依赖
 ```
 
 ### 用法:
