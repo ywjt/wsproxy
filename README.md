@@ -2,7 +2,7 @@
 
 Wsproxy是一个将websocket转成tcp的代理，用了此代理之后，可以直接用原来的tcp服务器，然后客户端用websocket进行通信。
 ```
-WSproxy v2.3.1 beta
+WSproxy v2.3.2 beta
 - 2023-06-30 [优化]增加 X-Forwarded-For 头部，用于后端获取真实IP
 - 2023-03-24 [新增]支持proxy protocol协议，以便后端服务器获取客户端真实ip
 - 2023-03-17 [新增]支持 ws 后端代理协议
