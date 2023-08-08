@@ -37,6 +37,34 @@ go build .  #可能还需要安装必须的依赖
 usage: ./wsproxy -addr 0.0.0.0:1443 -secret test1234
 ```
 
+### 制作Docker镜像:
+将当前目录下编译好的二进制文件，复制到 bin文件夹，并编写Dockerfile 进行打包。
+```bash
+mv wsproxy ../bin/
+
+cat >Dockerfile <<EOF
+FROM busybox
+WORKDIR /
+COPY wsproxy /
+
+EXPOSE 1443
+LABEL org.opencontainers.image.authors="SunshineKoo"
+LABEL org.opencontainers.image.version="2.3.1-beta"
+
+ENTRYPOINT ["./wsproxy"]
+CMD ["-h"]
+EOF
+
+docker build -t wsproxy:2.3.1 .
+```
+
+**启动容器：**
+```bash
+docker run --name wsproxy -d -p 1443:1443 wsproxy:2.3.1 -secret test1234
+docker ps -a|grep wsproxy
+```
+
+
 ### 可用参数：
 
 ```help
