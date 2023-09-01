@@ -56,6 +56,7 @@ func (s *Server) start() {
             CloseSignal()
 		}
 		close(idleConnsClosed)
+		CloseSignal()
         fmt.Printf("WSproxy killed\n")
 	}()
 
@@ -94,12 +95,11 @@ func NewSignal() int {
     if err := ioutil.WriteFile("gateway.pid", []byte(strconv.Itoa(pid)), 0644); err != nil {
         fmt.Printf("Can't write pid file: %s", err)
     }
-    defer os.Remove("gateway.pid")
     return pid
 }
 
 func CloseSignal() {
-    defer os.Remove("gateway.pid")
+    os.Remove("gateway.pid")
     logger.Flush()
     os.Exit(1)
 }
