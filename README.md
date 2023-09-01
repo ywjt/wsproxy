@@ -30,6 +30,9 @@ Intel(R) E5-2699 v3 2.30GHz /8核/16G
 
 ```bash
 #进入主目录
+git clone https://github.com/ywjt/wsproxy.git
+cd wsproxy
+
 export PATH=$PATH:/usr/local/go/bin:`pwd`
 export GOPATH=`pwd`
 go env -w GO111MODULE=auto
