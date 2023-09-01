@@ -27,6 +27,8 @@ PS: CPU E5-2699 v3 2.30GHz、8核、16G (仅开4个核)。 保守支持 1W并发
 #进入主目录
 export PATH=$PATH:/usr/local/go/bin:`pwd`
 export GOPATH=`pwd`
+go env -w GO111MODULE=auto
+go get -u golang.org/x/sys/unix
 
 cd wsproxy
 go build .  #可能还需要安装必须的依赖
