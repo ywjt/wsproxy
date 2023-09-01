@@ -51,6 +51,7 @@ usage: ./wsproxy -addr 0.0.0.0:1443 -secret test1234
 将当前目录下编译好的二进制文件，复制到 bin文件夹，并编写Dockerfile 进行打包。
 ```bash
 mv wsproxy ../bin/
+cd ../bin/
 
 cat >Dockerfile <<EOF
 FROM busybox
