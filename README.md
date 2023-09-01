@@ -22,6 +22,11 @@ PS: CPU E5-2699 v3 2.30GHz、8核、16G (仅开4个核)。 保守支持 1W并发
 
 
 ### 编译:
+开发环境：
+```
+go version go1.20 linux/amd64
+Intel(R) E5-2699 v3 2.30GHz /8核/16G
+```
 
 ```bash
 #进入主目录
