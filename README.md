@@ -16,6 +16,9 @@ WSproxy v2.3.1 beta
 - 使用aes加密算法，后端ip地址不直接对外
 - 没有多余的配置，可作为全局代理网关
 ```
+
+PS: 开启proxy protocol协议，需要后端服务器支持获取PP协议报文，可阅读 https://github.com/haproxy/haproxy/blob/master/doc/proxy-protocol.txt
+
 ### 性能测试
 <img src='https://github.com/ywjt/wsproxy/blob/main/doc/wsproxy_performance_testing.png'> 
 PS: CPU E5-2699 v3 2.30GHz、8核、16G (仅开4个核)。 保守支持 1W并发连接，20W pps。
