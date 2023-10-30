@@ -83,7 +83,7 @@ func log(c net.Conn, wc *websocket.Conn, r *http.Request, raddr string, runTime 
     http_x_forwarded_for := If(x_forwarded_for=="", "-", x_forwarded_for).(string)
     server_addr_port := If(local_addr=="", "-:nil", local_addr).(string)
     target_addr_port := If(raddr=="", "-:nil", raddr).(string)
-    request    := fmt.Sprintf("%s %s %s", r.Method, r.RequestURI, r.Proto)
+    request    := fmt.Sprintf("%s %s %s %s", r.Host, r.Method, r.RequestURI, r.Proto)
     status     := strconv.Itoa(stCode)
     http_user_agent := If(user_agent=="", "-", user_agent).(string)
     hashcode   := If(hashCode=="", "-", hashCode).(string)
